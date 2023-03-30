@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "SVlqBed+PP5q+aDGLRMMl9CrXmPkh2VgR1N/DPT0E9tc1uChQ6KZkdG9IkOSca4v2vRjYYEgcwJd90eHJCK9qg==",
+  "success": true,
+  "projectFilePath": "D:\\work\\dotnet\\dotnet-data-tool\\dotnet-data-tool.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\20438\\.nuget\\packages\\system.commandline\\2.0.0-beta4.22272.1\\system.commandline.2.0.0-beta4.22272.1.nupkg.sha512"
+  ],
+  "logs": []
+}

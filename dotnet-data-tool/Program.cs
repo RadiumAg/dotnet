@@ -1,27 +1,35 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.CommandLine;
-using System.CommandLine.Binding;
 
-public class Run
+class Run
 {
     static async Task<int> Main(string[] args)
     {
-        var cmd = new RootCommand(){
-            new  Option<string>("--name","请输入执行者名称"),
+        var option1 = new Option<string>("--name", "请输入执行者名称");
+        var option2 = new Option<string>("--format", "获取指定格式的事件字符串")
+        {
+            IsRequired = true
+        };
+        var cmd = new RootCommand() {
+            new Option<string>("--name", "请输入执行者名称"),
             new Option<string>("--format", "获取指定格式的事件字符串")
-            {
-                 IsRequired = true
-            },
-          };
-
+        {
+            IsRequired = true
+        }
+        };
+        cmd.AddOption(option1);
+        cmd.AddOption(option2);
         cmd.Name = "dotnet-data-tool";
         cmd.Description = "日期获取工具";
-        cmd.SetHandler<string, string, IConsole>(HandleCmd, cmd.Options[0] as IValueDescriptor<string>, cmd.Options[1] as IValueDescriptor<string>, null);
+        cmd.SetHandler((option1, option2) =>
+        {
+            HandleCmd(option1, option2);
+        }, option1, option2);
 
         return await cmd.InvokeAsync(args);
     }
 
-    static void HandleCmd(string name, string format, IConsole console)
+    static void HandleCmd(string name, string format)
     {
 
         if (!string.IsNullOrWhiteSpace(format))
@@ -34,6 +42,5 @@ public class Run
             }
             Console.Out.WriteLine(date);
         }
-
     }
 };

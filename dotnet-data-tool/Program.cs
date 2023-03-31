@@ -10,13 +10,7 @@ class Run
         {
             IsRequired = true
         };
-        var cmd = new RootCommand() {
-            new Option<string>("--name", "请输入执行者名称"),
-            new Option<string>("--format", "获取指定格式的事件字符串")
-        {
-            IsRequired = true
-        }
-        };
+        var cmd = new RootCommand();
         cmd.AddOption(option1);
         cmd.AddOption(option2);
         cmd.Name = "dotnet-data-tool";
@@ -44,3 +38,4 @@ class Run
         }
     }
 };
+

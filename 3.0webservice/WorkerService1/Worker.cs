@@ -28,7 +28,7 @@ namespace WorkerService1
     }
 
 
-
+    
     public static class WindowServiceLifetimeHostBuilderExtensions
     {
         public static IHostBuilder UseWindowsService(this IHostBuilder hostBuilder)

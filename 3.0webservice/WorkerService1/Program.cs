@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting.WindowsServices;
 using WorkerService1;
 
 IHost host = Host.CreateDefaultBuilder(args)

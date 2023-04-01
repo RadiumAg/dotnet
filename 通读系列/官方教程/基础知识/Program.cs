@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 var dictionary = new Dictionary<string, string>();
 dictionary.Add("mac", "2");
-Console.Out.WriteLine(new a()["v"]);
+Console.Out.WriteLine(dictionary["mac"]);
 
 class a
 {
@@ -9,13 +9,13 @@ class a
 
     public string v { get { return _v; } }
 
-    public string? this[string key]
+    public object? this[string key]
     {
         get
         {
             var type = this.GetType();
             var propertyInfo = type.GetProperty(key);
-            var value = propertyInfo?.GetValue(this) as string;
+            var value = propertyInfo?.GetValue(this);
             return value;
         }
     }

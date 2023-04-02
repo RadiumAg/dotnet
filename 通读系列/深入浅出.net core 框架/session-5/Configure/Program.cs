@@ -7,6 +7,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+var defaultConnection = configuration.GetValue<string>("test");
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

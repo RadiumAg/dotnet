@@ -6,27 +6,25 @@ namespace _4._0DependencyInjection.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly ISampleSingleton _sampleSingleton;
+    private readonly ISampleScoped _sampleScoped;
+    private readonly ISampleTransient _sampleTransient;
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ISampleSingleton sampleSingleton, ISampleScoped sampleScoped, ISampleTransient sampleTransient)
     {
-        _logger = logger;
+        _sampleScoped = sampleScoped;
+        _sampleSingleton = sampleSingleton;
+        _sampleTransient = sampleTransient;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public string Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+      Console.Out.WriteLine($@"
+          name:sampleScoped,Id:{this._sampleScoped.Id},hasCode:{this._sampleScoped.GetHashCode()}
+          name:sampleTransient,Id:{this._sampleTransient.Id},hashCode:{this._sampleTransient.GetHashCode()}
+          name:sampleSingleton,Id:{this._sampleSingleton.Id},hashCode:{this._sampleSingleton.GetHashCode()}
+      ");
+      return "123";
     }
 }

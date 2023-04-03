@@ -73,8 +73,14 @@ public class MyHostedService : IHostedService
 }
 
 
-public class MyBackgroundService : BackgroundService
+public abstract class MyBackgroundService : IHostedService, IDisposable
 {
+    private Task? _executeTask;
+    private CancellationTokenSource? _stoppingCts;
+    public virtual Task? ExecuteTask => _executeTask;
+
+    protected abstract Task ExecuteAsync(CancellationToken stoppingToken);
+
     private readonly ILogger<MyBackgroundService>? _logger;
 
     public MyBackgroundService(ILogger<MyBackgroundService> logger)
@@ -82,20 +88,41 @@ public class MyBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public virtual Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger?.LogInformation("Starting IHostedService registered in Startup");
-        while (true)
+        _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        _executeTask = ExecuteAsync(_stoppingCts.Token);
+
+        if (_executeTask.IsCompleted)
         {
-            DoWork();
-            await Task.Delay(5000);
+            return _executeTask;
         }
 
+        return Task.CompletedTask;
     }
 
     private void DoWork()
     {
         _logger?.LogInformation($"Hello World! - {DateTime.Now}");
+    }
+
+   
+ 
+    public void Dispose()
+    {
+         _stoppingCts?.Cancel();
+    }
+
+    public virtual async Task StopAsync(CancellationToken cancellationToken)
+    {
+         if(_executeTask == null) {
+            return;
+         }
+         try {
+            _stoppingCts?.Cancel();
+         }finally {
+            await Task.WhenAny(_executeTask, Task.Delay(Timeout.Infinite,cancellationToken)).ConfigureAwait(false);
+         }
     }
 }
 

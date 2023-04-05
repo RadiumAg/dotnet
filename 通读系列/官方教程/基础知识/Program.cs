@@ -1,15 +1,16 @@
 ﻿// See https://aka.ms/new-console-template for more information
-var dictionary = new Dictionary<string, string>();
-dictionary.Add("mac", "2");
-Console.Out.WriteLine(dictionary["mac"]);
+// var dictionary = new Dictionary<string, string>();
+// dictionary.Add("mac", "2");
+// Console.Out.WriteLine(dictionary["mac"]);
 
-class a
+var testObj = new TestItem();
+testObj["a"] = "testvalue";
+var a = "123";
+Console.Out.WriteLine(testObj[a]);
+
+abstract class ItemStatement
 {
-    public string _v = "1";
-
-    public string v { get { return _v; } }
-
-    public object? this[string key]
+    public virtual object? this[string key]
     {
         get
         {
@@ -18,7 +19,20 @@ class a
             var value = propertyInfo?.GetValue(this);
             return value;
         }
+        set
+        {
+            var type = this.GetType();
+            var propertyInfo = type.GetProperty(key);
+            propertyInfo?.SetValue(this, value);
+        }
     }
+}
+
+
+class TestItem : ItemStatement
+{
+    public string? a { get; set; }
+
 }
 
 

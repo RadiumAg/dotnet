@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Hosting.WindowsServices;
 using WorkerService1;
 
 IHost host = Host.CreateDefaultBuilder(args)
@@ -8,4 +7,21 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-await host.RunAsync();
+;
+
+
+
+class TestItem
+{
+    public string? a { get; set; }
+
+
+    public object this[object key]
+    {
+        get
+        {
+            return "a";
+        }
+    }
+
+}

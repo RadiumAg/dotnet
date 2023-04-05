@@ -16,6 +16,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCustomExtension();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -44,5 +46,13 @@ public class CustomMiddleware
             await _next(context);
         }
         _logger.LogWarning($"After Invoke {context.Request.pa}")
+    }
+}
+
+public static class MiddlewareExtension
+{
+    public static void UseCustomExtension(this IApplicationBuilder app)
+    {
+        app.UseMiddleware<CustomMiddleware>(); 
     }
 }

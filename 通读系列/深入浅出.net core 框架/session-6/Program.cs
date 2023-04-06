@@ -16,17 +16,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var host = new HostBuilder().ConfigureLogging(logging =>
-{
-    logging.AddConsole();
-}).ConfigureServices((hostContext, services) =>
-{
-    services.AddHostedService<MyBackgroundService>();
-});
+// var host = new HostBuilder().ConfigureLogging(logging =>
+// {
+//     logging.AddConsole();
+// }).ConfigureServices((hostContext, services) =>
+// {
+//     services.AddHostedService<MyBackgroundService>();
+// });
 
 
-await host.RunConsoleAsync();
+// await host.RunConsoleAsync();
 
+a c = new b();
+
+Console.Out.WriteLine(c.getA());
 
 app.UseHttpsRedirection();
 
@@ -34,7 +37,32 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
 app.Run();
+
+
+
+
+
+class b : a
+{
+    public new string name = "b";
+    public override string getA()
+    {
+        return this.name;
+    }
+}
+
+
+class a
+{
+    public  string name = "a";
+    public virtual string getA()
+    {
+        return this.name;
+    }
+}
+
 
 
 
@@ -106,23 +134,27 @@ public abstract class MyBackgroundService : IHostedService, IDisposable
         _logger?.LogInformation($"Hello World! - {DateTime.Now}");
     }
 
-   
- 
+
+
     public void Dispose()
     {
-         _stoppingCts?.Cancel();
+        _stoppingCts?.Cancel();
     }
 
     public virtual async Task StopAsync(CancellationToken cancellationToken)
     {
-         if(_executeTask == null) {
+        if (_executeTask == null)
+        {
             return;
-         }
-         try {
+        }
+        try
+        {
             _stoppingCts?.Cancel();
-         }finally {
-            await Task.WhenAny(_executeTask, Task.Delay(Timeout.Infinite,cancellationToken)).ConfigureAwait(false);
-         }
+        }
+        finally
+        {
+            await Task.WhenAny(_executeTask, Task.Delay(Timeout.Infinite, cancellationToken)).ConfigureAwait(false);
+        }
     }
 }
 

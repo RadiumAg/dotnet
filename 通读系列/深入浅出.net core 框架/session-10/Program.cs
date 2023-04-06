@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHealthChecks().AddCheck("default", Check);
 
+builder.Services.AddHealthChecksUI();
 
 var app = builder.Build();
 

@@ -26,23 +26,18 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
 
-const string cacheMaxAge = "604800";
+// const string cacheMaxAge = "604800";
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "MyStaticFiles")
-    ),
-    RequestPath = "/StaticFiles",
-    OnPrepareResponse = ctx =>
-    ctx.Context.Response.Headers.Add("Cache-Control", $"public,max-age={cacheMaxAge}")
+    FileProvider = new RedisFileProvider(Options.Create(new RedisFileOptions { HostAndPort = "localhost:6379" }))
 });
 
 app.UseDirectoryBrowser(new DirectoryBrowserOptions
 {
-    FileProvider = new RedisFileProvider(Options.Create(new RedisFileOptions { HostAndPort = "redis-10605.c270.us-east-1-3.ec2.cloud.redislabs.com:10605" }))
+    FileProvider = new RedisFileProvider(Options.Create(new RedisFileOptions { HostAndPort = "localhost:6379" }))
 });
 app.Run();
 

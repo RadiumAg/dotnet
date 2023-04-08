@@ -10,9 +10,27 @@ logger.LogInformation("This critical log  from Program");
 logger.LogInformation("This warning log from Program");
 
 
-logger.LogInformation(ApplicaitonEvents.Create,"创建订单");
-logger.LogInformation(ApplicationEvents.Create,"创建订单");
+logger.LogInformation(ApplicationEvents.Create, "创建订单");
+logger.LogInformation(ApplicationEvents.Create, "创建订单");
 
+
+var loggerFactory = new ServiceCollection().AddLogging(builder =>
+{
+    builder.AddSimpleConsole(options =>
+    {
+        options.IncludeScopes = true;
+    });
+})
+.BuildServiceProvider()
+.GetRequiredService<ILoggerFactory>();
+
+var logger2 = loggerFactory.CreateLogger<Program>();
+
+using(logger2.BeginScope("Scope Id:{id}",Guid.NewGuid().ToString("N"))) {
+    logger.LogInformation("start get");
+    logger.LogInformation("result=1");
+    logger.LogInformation("end get");
+}
 
 
 var levels = Enum.GetValues<LogLevel>()
@@ -51,11 +69,12 @@ app.MapControllers();
 
 app.Run();
 
-internal static class ApplicationEvents {
-  internal const int Create = 1000;
-  internal const int Read = 1001;
-  internal const int Update = 1002;
-  internal const int Delete = 1003;
+internal static class ApplicationEvents
+{
+    internal const int Create = 1000;
+    internal const int Read = 1001;
+    internal const int Update = 1002;
+    internal const int Delete = 1003;
 
 
 }

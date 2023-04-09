@@ -1,7 +1,6 @@
 class Test
 {
     static void Run() { 
-        var task = new Task<int>(()=>);
     }
 
     static int TaskMethod(int count, CancellationToken token){

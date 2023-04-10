@@ -16,30 +16,31 @@
 // Interlocked.CompareExchange(ref location, value, compared);
 // Console.WriteLine(location);
 
-class Program
-{
-    static void Main(string[] args)
-    {
-        var thread = new Thread(DoWork);
-        thread.Start();
-        Thread.Sleep(50);
+// class Program
+// {
+//     static void Main(string[] args)
+//     {
+//         var thread = new Thread(DoWork);
+//         thread.Start();
+//         Thread.Sleep(50);
 
-        Console.ReadKey();
-    }
+//         Console.ReadKey();
+//     }
 
-    private static volatile bool _isCompleted = false;
+//     private static volatile bool _isCompleted = false;
 
-    static void DoWork()
-    {
-        var spinWait = new SpinWait();
+//     static void DoWork()
+//     {
+//         var spinWait = new SpinWait();
 
-        while (!_isCompleted)
-        {
-            spinWait.SpinOnce();
-            Console.WriteLine($"自旋次数：{spinWait.Count}, 下一次调用触发上下文切换和内核宣旋转：{spinWait.NextSpinWillYield}");
-        }
+//         while (!_isCompleted)
+//         {
+//             spinWait.SpinOnce();
+//             Console.WriteLine($"自旋次数：{spinWait.Count}, 下一次调用触发上下文切换和内核宣旋转：{spinWait.NextSpinWillYield}");
+//         }
 
-        Console.WriteLine("Waiting is complete");
-    }
+//         Console.WriteLine("Waiting is complete");
+//     }
 
-}
+// }
+

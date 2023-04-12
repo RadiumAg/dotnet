@@ -28,6 +28,32 @@ var output = $@"The First five items are:{"path".Take(5).Select(n => $@"Item:{n.
 FormattableString second = $"It's the {DateTime.Now.Day} of the {DateTime.Now.Month} month";
 
 
+class Test
+{
+    public static void ExceptionMessage(object thisCantBeNull)
+    {
+        if (thisCantBeNull == null)
+        {
+            throw new ArgumentNullException(nameof(thisCantBeNull), "we told you this cant be null");
+        }
+    }
+}
+
+// 8 用null条件运算符调用时间处理程序
+public class EventSource
+{
+    private int counter = 0;
+    private EventHandler<int> Updated;
+
+    public void RaiseUpdates()
+    {
+        var handler = Updated;
+        if (handler != null)
+            handler(this, counter);
+    }
+}
+
+
 static string ToGerman(FormattableString src)
 {
     return string.Format(null, System.Globalization.CultureInfo.CreateSpecificCulture("de-de"), src.Format, src.GetArguments());

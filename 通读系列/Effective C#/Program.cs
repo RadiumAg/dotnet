@@ -47,13 +47,19 @@ public class EventSource
 
     public void RaiseUpdates()
     {
-        var handler = Updated;
-        if (handler != null)
-            handler(this, counter);
+        // var handler = Updated;
+        // if (handler != null)
+        //     handler(this, counter);
+
+        counter++;
+        Updated?.Invoke(this,counter);
     }
 }
 
 
+// 9 尽量避免装箱与取消装箱这两种操作
+var firstNumber = 100;
+Console.WriteLine($"A few numbers: {}");
 static string ToGerman(FormattableString src)
 {
     return string.Format(null, System.Globalization.CultureInfo.CreateSpecificCulture("de-de"), src.Format, src.GetArguments());

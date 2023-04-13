@@ -37,6 +37,7 @@ d.MagicMethod();
 
 var  cl2 = d as MyClass;
 cl2.MagicMethod();
+// 13 用适当的方式初始化类中的静态成员
 
 static string ToGerman(FormattableString src)
 {

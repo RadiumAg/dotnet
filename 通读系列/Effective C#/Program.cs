@@ -35,9 +35,10 @@ Console.WriteLine(attendees[0].ToString());
 var d = new MyOtherClass();
 d.MagicMethod();
 
-var  cl2 = d as MyClass;
+var cl2 = d as MyClass;
 cl2.MagicMethod();
 // 13 用适当的方式初始化类中的静态成员
+Console.WriteLine(MySingleton2.TheOnly);
 
 static string ToGerman(FormattableString src)
 {
@@ -49,6 +50,38 @@ static string ToFrenchCanada(FormattableString src)
     return string.Format(null, System.Globalization.CultureInfo.CreateSpecificCulture("fr-CA"), src.Format, src.GetArguments());
 }
 
+
+public class MySingleton
+{
+    private static readonly MySingleton theOneAndOnly = new MySingleton();
+
+    public static MySingleton TheOnly
+    {
+        get { return theOneAndOnly; }
+    }
+
+    private MySingleton() { }
+}
+
+public class MySingleton2
+{
+    private static readonly MySingleton2 theOneAndOnly;
+
+    static MySingleton2()
+    {
+        theOneAndOnly = new MySingleton2();
+    }
+
+    public static MySingleton2 TheOnly
+    {
+        get { return theOneAndOnly; }
+    }
+
+    private MySingleton2()
+    {
+
+    }
+}
 
 public class MyClass
 {

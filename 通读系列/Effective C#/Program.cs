@@ -40,6 +40,8 @@ cl2.MagicMethod();
 // 13 用适当的方式初始化类中的静态成员
 Console.WriteLine(MySingleton2.TheOnly);
 
+
+
 static string ToGerman(FormattableString src)
 {
     return string.Format(null, System.Globalization.CultureInfo.CreateSpecificCulture("de-de"), src.Format, src.GetArguments());
@@ -138,4 +140,29 @@ public class EventSource
     }
 }
 
+
+public class MyClass2
+{
+    private List<string> coll;
+    private string name;
+
+
+    public MyClass2()
+    {
+        commConstructor(0, "");
+    }
+
+    public MyClass2(int initialCount = 0, string name = "")
+    {
+      commConstructor(initialCount, name);
+    }
+
+
+    private void commConstructor(int count, string name)
+    {
+        coll = (count > 0) ? new List<string>(count) : new List<string>();
+        this.name = name;
+    }
+
+}
 

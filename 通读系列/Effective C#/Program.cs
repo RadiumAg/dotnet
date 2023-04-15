@@ -52,6 +52,18 @@ static string ToFrenchCanada(FormattableString src)
     return string.Format(null, System.Globalization.CultureInfo.CreateSpecificCulture("fr-CA"), src.Format, src.GetArguments());
 }
 
+// 29 有限考虑提供迭代器方法，而不要返回集合
+public static IEnumerable<char> GenerateAlphabet()
+{
+    var letter = 'a';
+
+    while (letter <= 'z')
+    {
+        yield return letter;
+        letter++;
+    }
+}
+
 
 public class MySingleton
 {
@@ -154,7 +166,7 @@ public class MyClass2
 
     public MyClass2(int initialCount = 0, string name = "")
     {
-      commConstructor(initialCount, name);
+        commConstructor(initialCount, name);
     }
 
 
@@ -165,4 +177,5 @@ public class MyClass2
     }
 
 }
+
 

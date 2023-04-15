@@ -40,6 +40,9 @@ cl2.MagicMethod();
 // 13 用适当的方式初始化类中的静态成员
 Console.WriteLine(MySingleton2.TheOnly);
 
+// 30 优先考虑通过查询语句来编写代码，而不要使用循环语句
+var foo = (from n in Enumerable.Range(0, 100) select n * n).ToArray();
+
 
 
 static string ToGerman(FormattableString src)

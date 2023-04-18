@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
+using System.Text;
 
 StringFormatDemo.Main();
 StringCompareDemo.Main();
+UnicodeDemo.Main();
 
 class StringFormatDemo
 {
@@ -53,4 +55,31 @@ class StringCompareDemo
         Console.WriteLine(string.Compare("财经传讯公司", "房地产及按揭", false, new CultureInfo("zh-CN")));
         Console.WriteLine(string.Compare("财经传讯公司", "房地产及按揭", false, new CultureInfo("en-US")));
     }
+}
+
+class UnicodeDemo
+{
+    public static void Main()
+    {
+        var emoji = "\uD83D\uDE42";
+        Console.WriteLine(emoji);
+        var x = "😀";
+        Console.WriteLine(GetUnicodeString(x));
+        Console.WriteLine("Unicode - UTF16");
+        var bytes = Encoding.Unicode.GetBytes(x);
+        foreach (var b in bytes) Console.Write("{0:x2}", b);
+    }
+
+
+    static string? GetUnicodeString(string s)
+    {
+        var sb = new StringBuilder();
+        foreach (char c in s)
+        {
+            sb.Append("\\u");
+            sb.Append(String.Format("{0:x4}", (int)c));
+        }
+        return sb.ToString();
+    }
+
 }

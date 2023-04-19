@@ -1,9 +1,12 @@
 ﻿using System.Globalization;
+using System.IO.Compression;
+using System.Net;
 using System.Text;
 
 StringFormatDemo.Main();
 StringCompareDemo.Main();
 UnicodeDemo.Main();
+ResizeImage.Main();
 
 class StringFormatDemo
 {
@@ -132,13 +135,72 @@ class StreamDemo
 
             fs.Seek(0, SeekOrigin.Begin);
             int b = 0;
-            while((b = fs.ReadByte()) > 0) {
-                 Console.Write((char)b);
+            while ((b = fs.ReadByte()) > 0)
+            {
+                Console.Write((char)b);
             }
 
             Console.WriteLine();
 
-            fs.Seek(0,SeekOrigin.Begin);
+            fs.Seek(0, SeekOrigin.Begin);
+
+            var bytes = new byte[20];
+
+            var count = 0;
+
+            while ((count = fs.Read(bytes, 0, bytes.Length)) > 0)
+            {
+                Console.Write(System.Text.Encoding.ASCII.GetString(bytes));
+                Array.Clear(bytes, 0, bytes.Length);
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
+
+
+class ResizeImage
+{
+    public static void Main()
+    {
+        var request = WebRequest.CreateHttp("https://www.yulumi.cn/gl/uploads/allimg/201128/162003D24-2.jpg");
+        var response = request.GetResponse();
+
+        using (var inputStream = response.GetResponseStream())
+        {
+            using (var outputStream = File.Open("Resized.jpg", FileMode.OpenOrCreate))
+            {
+                var img = Image.Load(inputStream);
+                img.Mutate(data => data.Resize(img.Width / 2, img.Height / 2));
+
+                img.Save(outputStream, img.Metadata.DecodedImageFormat);
+                outputStream.Seek(0, SeekOrigin.Begin);
+                Console.WriteLine(outputStream.ReadByte());
+            }
+        }
+    }
+}
+
+
+class CsGzip
+{
+    public static void Compress(string file)
+    {
+        using (var fileStream = File.OpenRead(file))
+        {
+            if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
+                return;
+            }
+
+            using (var outputStream = File.Create(file + ".gz"))
+            {
+                using (var gzstream = new GZipStream(outputStream, CompressionMode.Compress))
+                {
+                    fileStream.CopyTo(gzstream);
+                }
+            }
         }
     }
 }

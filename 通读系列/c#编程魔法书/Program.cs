@@ -7,6 +7,8 @@ StringFormatDemo.Main();
 StringCompareDemo.Main();
 UnicodeDemo.Main();
 ResizeImage.Main();
+Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
+ColorFul.Main();
 
 class StringFormatDemo
 {
@@ -159,7 +161,6 @@ class StreamDemo
 }
 
 
-
 class ResizeImage
 {
     public static void Main()
@@ -201,6 +202,71 @@ class CsGzip
                     fileStream.CopyTo(gzstream);
                 }
             }
+        }
+    }
+}
+
+class Image2Ascii
+{
+    static string _ASCIICharacters = "##@%=+*:-. ";
+
+    public static string Convert(string file, int width, int height)
+    {
+        var img = Image.Load<Rgba32>(Path.GetFullPath(file));
+        width = Math.Min(width, img.Width);
+        height = Math.Min(height * img.Height / img.Width, img.Height);
+
+        img.Mutate(data => data.Resize(width, height).Grayscale());
+
+        var sb = new StringBuilder();
+
+        for (var h = 0; h < height; ++h)
+        {
+            for (var w = 0; w < width; ++w)
+            {
+                var pixel = img[w, h];
+                var idx = pixel.R * _ASCIICharacters.Length / 255;
+                idx = Math.Max(0, Math.Min(_ASCIICharacters.Length - 1, idx));
+                var c = _ASCIICharacters[idx];
+                sb.Append(c);
+            }
+
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+}
+
+
+class ColorFul
+{
+    static string _ASCIICharacters = "##@%=+*:-. ";
+
+
+    public static void Main()
+    {
+        var originColor = Console.ForegroundColor;
+        var colors = (ConsoleColor[])Enum.GetValues(typeof(ConsoleColor));
+
+
+        var c = (char)Console.Read();
+
+        while (c > 0 && c < 255)
+        {
+            var idx = _ASCIICharacters.IndexOf(c);
+
+            if (idx >= 0)
+            {
+                Console.ForegroundColor = (ConsoleColor)(colors[colors.Length - idx - 1]);
+            }
+            else
+            {
+                Console.ForegroundColor = originColor;
+            }
+
+            Console.WriteLine(c);
+            c = (char)Console.Read();
         }
     }
 }

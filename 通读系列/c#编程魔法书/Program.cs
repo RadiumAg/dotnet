@@ -83,3 +83,62 @@ class UnicodeDemo
     }
 
 }
+
+
+class CsxCopy
+{
+
+    static void DoXCopy(string srcdir, string dstdir, string searchPattern)
+    {
+        if (srcdir[srcdir.Length - 1] == Path.DirectorySeparatorChar)
+            srcdir = srcdir.Substring(0, srcdir.Length - 1);
+
+        if (dstdir[dstdir.Length - 1] == Path.DirectorySeparatorChar)
+            dstdir = dstdir.Substring(0, dstdir.Length - 1);
+
+        var files = Directory.GetFiles(srcdir, searchPattern, SearchOption.AllDirectories);
+
+        foreach (var file in files)
+        {
+            var directory = Path.GetDirectoryName(file);
+            var filename = Path.GetFileName(file);
+            var newdirectory = dstdir;
+
+            if (directory.Length > srcdir.Length)
+            {
+                var relativePath = directory.Substring(srcdir.Length + 1, directory.Length - srcdir.Length - 1);
+                newdirectory = Path.Combine(dstdir, relativePath);
+            }
+
+            if (!Directory.Exists(newdirectory))
+                Directory.CreateDirectory(newdirectory);
+
+            File.Copy(file, Path.Combine(newdirectory, filename));
+        }
+    }
+}
+
+
+class StreamDemo
+{
+    static void Main()
+    {
+        using (var fs = new FileStream("filestream.demo", FileMode.OpenOrCreate))
+        {
+            for (var i = 0; i < 26; ++i)
+            {
+                fs.WriteByte((byte)(i + 'a'));
+            }
+
+            fs.Seek(0, SeekOrigin.Begin);
+            int b = 0;
+            while((b = fs.ReadByte()) > 0) {
+                 Console.Write((char)b);
+            }
+
+            Console.WriteLine();
+
+            fs.Seek(0,SeekOrigin.Begin);
+        }
+    }
+}

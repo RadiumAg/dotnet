@@ -3,10 +3,10 @@ using System.IO.Compression;
 using System.Net;
 using System.Text;
 
-StringFormatDemo.Main();
-StringCompareDemo.Main();
-UnicodeDemo.Main();
-ResizeImage.Main();
+// StringFormatDemo.Main();
+// StringCompareDemo.Main();
+// UnicodeDemo.Main();
+// ResizeImage.Main();
 Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
 ColorFul.Main();
 

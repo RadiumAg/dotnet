@@ -238,7 +238,6 @@ class Image2Ascii
     }
 }
 
-
 class ColorFul
 {
     static string _ASCIICharacters = "##@%=+*:-. ";
@@ -268,5 +267,25 @@ class ColorFul
             Console.WriteLine(c);
             c = (char)Console.Read();
         }
+    }
+}
+
+
+class MMapDemo
+{
+    static void FileIoDemo(string source, string destination)
+    {
+        var input = Image.Load<Rgba32>(Path.GetFullPath(source));
+        
+        for (int i = 0; i < input.Height; i++)
+        {
+            for (var j = 0; j <  input.Width; ++j){
+               Rgba32 white;
+               Rgba32.TryParseHex("#ffff", out white);
+               input[j,i] = white;
+            }
+        }
+
+        input.Save(Path.GetFullPath(destination));
     }
 }

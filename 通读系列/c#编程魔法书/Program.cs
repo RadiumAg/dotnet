@@ -10,7 +10,7 @@ using System.Text;
 // ResizeImage.Main();
 // Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
 // ColorFul.Main();
-MMapDemo.MemMapDemo("./Resized.png", "test");
+// MMapDemo.MemMapDemo("./Resized.png", "test");
 
 class StringFormatDemo
 {
@@ -324,5 +324,35 @@ class MMapDemo
                 }
             }
         }
+    }
+}
+
+
+class GlobalizationDemo
+{
+
+    static void Main()
+    {
+        // 源码位置：第2章\GlobalizationDemo.cs
+        // 编译命令：csc GlobalizationDemo.cs
+        var culture = CultureInfo.CreateSpecificCulture("en-GB");
+        var date = DateTime.Parse("1/9/2019", culture);
+        // 输出: 2019年9月1日 星期日
+        Console.WriteLine(date.ToLongDateString());
+        culture = CultureInfo.CreateSpecificCulture("en-US");
+        date = DateTime.Parse("1/9/2019", culture);
+        // 输出: 2019年1月9日 星期三
+        Console.WriteLine(date.ToLongDateString());
+        // 输出：1/9/19 12:00:00 AM
+        Console.WriteLine(date.ToString(culture));
+        // 输出：1/9/19 12:00:00 AM
+        Console.WriteLine(date.ToString(culture.DateTimeFormat));
+        // 模式: yyyy'-'MM'-'dd'T'HH':'mm':'ss，输出：2019-01-09T00:00:00
+        Console.WriteLine(date.ToString(
+            culture.DateTimeFormat.SortableDateTimePattern));
+        // 模式: dddd, MMMM d, yyyy，输出: 星期三, 一月 9, 2019
+        Console.WriteLine(date.ToString(culture.DateTimeFormat.LongDatePattern));
+        Console.WriteLine($"进程的区域设置: {CultureInfo.CurrentCulture.Name}，" +
+            $"UI界面的区域设置：{CultureInfo.CurrentUICulture.Name}");
     }
 }

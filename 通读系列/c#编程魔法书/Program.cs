@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO.Compression;
+using System.IO.MemoryMappedFiles;
 using System.Net;
 using System.Text;
 
@@ -7,8 +8,9 @@ using System.Text;
 // StringCompareDemo.Main();
 // UnicodeDemo.Main();
 // ResizeImage.Main();
-Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
-ColorFul.Main();
+// Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
+// ColorFul.Main();
+MMapDemo.MemMapDemo("./Resized.png", "test");
 
 class StringFormatDemo
 {
@@ -273,19 +275,54 @@ class ColorFul
 
 class MMapDemo
 {
-    static void FileIoDemo(string source, string destination)
+    public static void FileIoDemo(string source, string destination)
     {
         var input = Image.Load<Rgba32>(Path.GetFullPath(source));
-        
+
         for (int i = 0; i < input.Height; i++)
         {
-            for (var j = 0; j <  input.Width; ++j){
-               Rgba32 white;
-               Rgba32.TryParseHex("#ffff", out white);
-               input[j,i] = white;
+            for (var j = 0; j < input.Width; ++j)
+            {
+                Rgba32 white;
+                Rgba32.TryParseHex("#ffff", out white);
+                input[j, i] = white;
             }
         }
 
         input.Save(Path.GetFullPath(destination));
+    }
+
+    public static void MemMapDemo(string source, string destination)
+    {
+        File.Copy(source, destination, true);
+        byte[] buffer = new byte[2];
+        using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+        using (var header = new BinaryReader(fileStream))
+        {
+
+            var pngHeader = header.ReadBytes(8);
+            var ihdrHeader = header.ReadBytes(8);
+
+            var widthBytes = header.ReadBytes(4);
+            var heightBytes = header.ReadBytes(4);
+
+            Array.Reverse(widthBytes);
+            Array.Reverse(heightBytes);
+
+            var width = BitConverter.ToInt32(widthBytes, 0);
+            var height = BitConverter.ToInt32(heightBytes, 0);
+            using (var mm = MemoryMappedFile.CreateFromFile(destination))
+            {
+                var whiteRow = new byte[width];
+                for (var i = 0; i < width; ++i) whiteRow[i] = 255;
+                using (var writer = mm.CreateViewAccessor(21, width * height))
+                {
+                    for (var i = 0; i < height; i += 50)
+                    {
+                        writer.WriteArray(i * width, whiteRow, 0, whiteRow.Length);
+                    }
+                }
+            }
+        }
     }
 }

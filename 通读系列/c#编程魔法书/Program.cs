@@ -11,6 +11,7 @@ using System.Text;
 // Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
 // ColorFul.Main();
 // MMapDemo.MemMapDemo("./Resized.png", "test");
+Huobi.Main();
 
 class StringFormatDemo
 {

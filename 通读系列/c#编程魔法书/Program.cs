@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
 // StringFormatDemo.Main();
@@ -11,7 +12,8 @@ using System.Text;
 // Console.WriteLine(Image2Ascii.Convert("Resized.jpg", 120, 100));
 // ColorFul.Main();
 // MMapDemo.MemMapDemo("./Resized.png", "test");
-Huobi.Main();
+// Huobi.Main();
+ReflectionDemo.Main();
 
 class StringFormatDemo
 {
@@ -355,5 +357,45 @@ class GlobalizationDemo
         Console.WriteLine(date.ToString(culture.DateTimeFormat.LongDatePattern));
         Console.WriteLine($"进程的区域设置: {CultureInfo.CurrentCulture.Name}，" +
             $"UI界面的区域设置：{CultureInfo.CurrentUICulture.Name}");
+    }
+}
+
+public class ReflectionDemo
+{
+    public static void Main()
+    {
+        var i = 42;
+        Type type = i.GetType();
+        Console.WriteLine($"变量的类型:{type}");
+        type = typeof(int);
+        Console.WriteLine($"变量i的类型：{type},属于:{type.Assembly}");
+        type = typeof(ReflectionDemo);
+        Console.WriteLine($"本类:{type}，属于“{type.Assembly}");
+        var assembly = Assembly.GetExecutingAssembly();
+        Console.WriteLine($"当前组装件：{assembly}");
+        type = typeof(DateTime);
+        ConstructorInfo[] ctors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+        PrintMembers(ctors);
+
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+
+        PrintMembers(methods);
+
+        var files = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        PrintMembers(files);
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        PrintMembers(properties);
+    }
+
+
+    static void PrintMembers(MemberInfo[] members)
+    {
+        foreach (var member in members)
+        {
+            Console.WriteLine($"{member.MemberType} {member.Name}");
+
+            Console.WriteLine("------------");
+        }
     }
 }

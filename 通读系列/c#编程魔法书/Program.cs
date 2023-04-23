@@ -16,7 +16,8 @@ using System.Runtime.Serialization;
 // MMapDemo.MemMapDemo("./Resized.png", "test");
 // Huobi.Main();
 // ReflectionDemo.Main();
-SerializationDemo.Main();
+// SerializationDemo.Main();
+DynamicKeyworld.Main();
 
 class StringFormatDemo
 {
@@ -432,13 +433,13 @@ class SerializationDemo
 {
 
     [Serializable]
-    private class Order :ISerializable
+    private class Order : ISerializable
     {
         public string? Market { get; set; }
         public Guid Id { get; set; }
-        public int UserId { get; set; }
+        public uint UserId { get; set; }
         public decimal Volume { get; set; }
-        public decimal? Price{get;set;}
+        public decimal? Price { get; set; }
         public DateTime PlacedDate { get; set; }
         public byte[]? ClientIdentity { get; set; }
 
@@ -455,19 +456,20 @@ class SerializationDemo
             PlacedDate = new DateTime(info.GetInt64("d"));
             Id = (Guid)info.GetValue("i", typeof(Guid));
             Market = (string)info.GetValue("p", typeof(string));
-            Price = (decimal) info.GetValue("p",typeof(decimal));
-            UserId = (uint)info.GetValue("u",typeof(uint));
-            Volume = (decimal)info.GetValue("v",typeof(decimal));
+            Price = (decimal)info.GetValue("p", typeof(decimal));
+            UserId = (uint)info.GetValue("u", typeof(uint));
+            Volume = (decimal)info.GetValue("v", typeof(decimal));
         }
 
-         public void GetObjectData(SerializationInfo info, StreamContent content){
-            info.AddValue("c",IsCancellded);
-            info.AddValue("d",PlacedDate.ToUniversalTime().Ticks);
-            info.AddValue("i",Id);
-            info.AddValue("m",Market);
-            info.AddValue("p",Price.HasValue?Price.Value : 0);
-            info.AddValue("u",UserId);
-            info.AddValue("v",Volume);
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("c", IsCancellded);
+            info.AddValue("d", PlacedDate.ToUniversalTime().Ticks);
+            info.AddValue("i", Id);
+            info.AddValue("m", Market);
+            info.AddValue("p", Price.HasValue ? Price.Value : 0);
+            info.AddValue("u", UserId);
+            info.AddValue("v", Volume);
         }
     }
 
@@ -493,5 +495,36 @@ class SerializationDemo
             deserialized = (Order)formattter.Deserialize(stream);
 
         Console.WriteLine($"order.Id:{order.Id}, deserialized.Id:{deserialized.Id}");
+    }
+}
+
+
+
+public class DynamicKeyworld
+{
+    public static void Main()
+    {
+        dynamic iunknow = CreateDynamicObject();
+        Console.WriteLine(iunknow.DemoStringProperty);
+        Console.WriteLine(iunknow.DemoIntProperty);
+        iunknow.DemoDelegate("anonymous function");
+
+        Console.WriteLine(iunknow.ToString());
+    }
+
+
+    public static dynamic CreateDynamicObject()
+    {
+        dynamic obj = new
+        {
+            DemoStringProperty = "A string property",
+            DemoIntProperty = 123,
+            DemoDelegate = (Action<string>)delegate (string s)
+            {
+                Console.WriteLine("Hello," + s);
+            }
+        };
+
+        return obj;
     }
 }

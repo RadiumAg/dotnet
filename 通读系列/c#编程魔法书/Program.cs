@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Runtime.Serialization;
 
 // StringFormatDemo.Main();
 // StringCompareDemo.Main();
@@ -14,8 +15,8 @@ using System.Text;
 // ColorFul.Main();
 // MMapDemo.MemMapDemo("./Resized.png", "test");
 // Huobi.Main();
+// ReflectionDemo.Main();
 SerializationDemo.Main();
-ReflectionDemo.Main();
 
 class StringFormatDemo
 {
@@ -363,43 +364,7 @@ class GlobalizationDemo
 }
 
 
-class SerializationDemo
-{
 
-    class Order
-    {
-        public string? Market { get; set; }
-        public Guid Id { get; set; }
-        public int UserId { get; set; }
-        public decimal Volume { get; set; }
-        public DateTime PlacedDate { get; set; }
-        public byte[]? ClientIdentity { get; set; }
-    }
-
-    public static void Main()
-    {
-        var order = new Order
-        {
-            Id = Guid.NewGuid(),
-            UserId = 888,
-            Market = "BTC/USDT",
-            Volume = 1.23m,
-            PlacedDate = DateTime.Now,
-            ClientIdentity = Guid.NewGuid().ToByteArray()
-        };
-
-        var formattter = new BinaryFormatter();
-        var filename = "serialization.bin";
-        using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write))
-            formattter.Serialize(stream, order);
-
-        Order? deserialized = null;
-        using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            deserialized = (Order)formattter.Deserialize(stream);
-
-        Console.WriteLine($"order.Id:{order.Id}， deserialized.Id:{deserialized.Id}");
-    }
-}
 
 public class ReflectionDemo
 {
@@ -463,4 +428,70 @@ public class ReflectionDemo
 }
 
 
+class SerializationDemo
+{
 
+    [Serializable]
+    private class Order :ISerializable
+    {
+        public string? Market { get; set; }
+        public Guid Id { get; set; }
+        public int UserId { get; set; }
+        public decimal Volume { get; set; }
+        public decimal? Price{get;set;}
+        public DateTime PlacedDate { get; set; }
+        public byte[]? ClientIdentity { get; set; }
+
+        public decimal? Primise { get; set; }
+
+        public bool IsCancellded { get; set; }
+
+
+        public Order() { }
+
+        public Order(SerializationInfo info, StreamingContext context)
+        {
+            IsCancellded = info.GetBoolean("c");
+            PlacedDate = new DateTime(info.GetInt64("d"));
+            Id = (Guid)info.GetValue("i", typeof(Guid));
+            Market = (string)info.GetValue("p", typeof(string));
+            Price = (decimal) info.GetValue("p",typeof(decimal));
+            UserId = (uint)info.GetValue("u",typeof(uint));
+            Volume = (decimal)info.GetValue("v",typeof(decimal));
+        }
+
+         public void GetObjectData(SerializationInfo info, StreamContent content){
+            info.AddValue("c",IsCancellded);
+            info.AddValue("d",PlacedDate.ToUniversalTime().Ticks);
+            info.AddValue("i",Id);
+            info.AddValue("m",Market);
+            info.AddValue("p",Price.HasValue?Price.Value : 0);
+            info.AddValue("u",UserId);
+            info.AddValue("v",Volume);
+        }
+    }
+
+    public static void Main()
+    {
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            UserId = 888,
+            Market = "BTC/USDT",
+            Volume = 1.23m,
+            PlacedDate = DateTime.Now,
+            ClientIdentity = Guid.NewGuid().ToByteArray()
+        };
+
+        var formattter = new BinaryFormatter();
+        var filename = "serialization.bin";
+        using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write))
+            formattter.Serialize(stream, order);
+
+        Order? deserialized = null;
+        using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            deserialized = (Order)formattter.Deserialize(stream);
+
+        Console.WriteLine($"order.Id:{order.Id}, deserialized.Id:{deserialized.Id}");
+    }
+}

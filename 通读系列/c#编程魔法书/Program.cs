@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 // StringFormatDemo.Main();
@@ -12,6 +13,7 @@ using System.Text;
 // ColorFul.Main();
 // MMapDemo.MemMapDemo("./Resized.png", "test");
 Huobi.Main();
+SerializationDemo.Main();
 
 class StringFormatDemo
 {
@@ -355,5 +357,44 @@ class GlobalizationDemo
         Console.WriteLine(date.ToString(culture.DateTimeFormat.LongDatePattern));
         Console.WriteLine($"进程的区域设置: {CultureInfo.CurrentCulture.Name}，" +
             $"UI界面的区域设置：{CultureInfo.CurrentUICulture.Name}");
+    }
+}
+
+
+class SerializationDemo
+{
+
+    class Order
+    {
+        public string? Market { get; set; }
+        public Guid Id { get; set; }
+        public int UserId { get; set; }
+        public decimal Volume { get; set; }
+        public DateTime PlacedDate { get; set; }
+        public byte[]? ClientIdentity { get; set; }
+    }
+
+    public static void Main()
+    {
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            UserId = 888,
+            Market = "BTC/USDT",
+            Volume = 1.23m,
+            PlacedDate = DateTime.Now,
+            ClientIdentity = Guid.NewGuid().ToByteArray()
+        };
+
+        var formattter = new BinaryFormatter();
+        var filename = "serialization.bin";
+        using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write))
+            formattter.Serialize(stream, order);
+
+        Order? deserialized = null;
+        using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            deserialized = (Order)formattter.Deserialize(stream);
+
+        Console.WriteLine($"order.Id:{order.Id}， deserialized.Id:{deserialized.Id}");
     }
 }

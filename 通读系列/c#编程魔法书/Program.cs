@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Linq;
 
 // StringFormatDemo.Main();
 // StringCompareDemo.Main();
@@ -527,4 +528,10 @@ public class DynamicKeyworld
 
         return obj;
     }
+
+
+    public static  dynamicDDemo(){
+        JObject.Parse(@"");
+    }
+
 }

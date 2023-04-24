@@ -531,7 +531,13 @@ public class DynamicKeyworld
 
 
     public static  dynamicDDemo(){
-        JObject.Parse(@"");
+        JObject.Parse(@"{
+            'Stores':[
+                'Lambton Quay',
+                'Willis Street
+            ],
+            'Manufacturers':[]
+        }");
     }
 
 }

@@ -3,9 +3,9 @@ using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 
 // StringFormatDemo.Main();
@@ -565,49 +565,59 @@ public class DynamicKeyworld
 
 }
 
-public class ExpandoObjectDemo{
-    static void Main(){
+public class ExpandoObjectDemo
+{
+    static void Main()
+    {
         dynamic contact = new System.Dynamic.ExpandoObject();
         contact.Name = "12312";
     }
 }
 
-class Lambdademo {
-    static void Main(){
+class Lambdademo
+{
+    static void Main()
+    {
         int total = 0;
-        Action<int> sum = delegate(int n) {
+        Action<int> sum = delegate (int n)
+        {
             total = total + n;
         };
         sum(12);
         Console.WriteLine($"total:{total}");
 
         total = 0;
-        sum = n=> total = total + n;
+        sum = n => total = total + n;
         sum(12);
         Console.WriteLine($"total:{total}");
 
         Console.WriteLine($"本地方法：{LocalFun(12)}，total:{total}");
         Console.WriteLine($"LocalFib:{LocalFib(2)}");
 
-        int LocalFun(int value) {
+        int LocalFun(int value)
+        {
             total = total + value;
             return total;
         }
 
-        int LocalFib(int n) {
-            return n > 1? LocalFib(n-1) + LocalFib(n-2) : n;
+        int LocalFib(int n)
+        {
+            return n > 1 ? LocalFib(n - 1) + LocalFib(n - 2) : n;
         }
     }
 
 
-    static void UseDelegate(Action<int> action ,int value){
+    static void UseDelegate(Action<int> action, int value)
+    {
         action(value);
     }
 }
 
 
-class MultiThreadDemo{
-    public static void Main(){
+class MultiThreadDemo
+{
+    public static void Main()
+    {
         var thread1 = new Thread(ThreadFunc1);
         var thread2 = new Thread(ThreadFunc2);
 
@@ -620,12 +630,69 @@ class MultiThreadDemo{
         thread2.Join();
     }
 
-    static void ThreadFunc1(){
+    static void ThreadFunc1()
+    {
         Thread.Sleep(1000);
         Console.WriteLine("在无参线程中！");
     }
 
-    static void ThreadFunc2(object state) {
+    static void ThreadFunc2(object state)
+    {
         Console.WriteLine($"在有参线程中，参数时{state}!");
+    }
+}
+
+
+class BlockWaitingDemo
+{
+    static int SingleThreadVersion(int end)
+    {
+        var range = new Range(1, end);
+
+    }
+
+    static void FindPrime(object state)
+    {
+        var range = state as Range;
+
+        for (var number = range.Start.Value; number <= range.End.Value; ++number)
+        {
+            if (number < 2) continue;
+
+            var j = 2;
+            var isPrime = true;
+
+            while (j <= number / 2)
+            {
+                if (number % j == 0)
+                {
+                    isPrime = false;
+                    break;
+                }
+
+                j++;
+            }
+        }
+    }
+}
+
+
+class LockBasic
+{
+    private static object _countLock = new object();
+    static void IncrementMonitor()
+    {
+        for (var i = 0; i < _countLock; ++i)
+        {
+            bool lockTaken = false;
+            try
+            {
+                Monitor.Enter(_countLock, ref lockTaken);
+            }
+            finally
+            {
+                if (lockTaken) Monitor.Exit(_countLock);
+            }
+        }
     }
 }

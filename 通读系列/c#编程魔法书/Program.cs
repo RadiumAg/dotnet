@@ -564,3 +564,10 @@ public class DynamicKeyworld
     }
 
 }
+
+public class ExpandoObjectDemo{
+    static void Main(){
+        dynamic contact = new System.Dynamic.ExpandoObject();
+        contact.Name = "12312";
+    }
+}

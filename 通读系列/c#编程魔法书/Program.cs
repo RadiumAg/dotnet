@@ -550,11 +550,15 @@ public class DynamicKeyworld
         }");
 
         Console.WriteLine($"Count:{o.Stores.Count},[0]||:{o.Stores[0]}");
-        for(var i =0;  i< o.Manufacturers.Count; ++i) {
-            if(o.Manufacturers[i].Products.Type == JTokenType.Integer) {
+        for (var i = 0; i < o.Manufacturers.Count; ++i)
+        {
+            if (o.Manufacturers[i].Products.Type == JTokenType.Integer)
+            {
                 Console.WriteLine("Products的值为0");
-            }else{
-                Console.WriteLine($"Products:{o.Manufactures[i].Products[0].Name}")
+            }
+            else
+            {
+                Console.WriteLine($"Products:{o.Manufactures[i].Products[0].Name}");
             }
         }
     }

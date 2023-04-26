@@ -18,7 +18,8 @@ using Newtonsoft.Json.Linq;
 // Huobi.Main();
 // ReflectionDemo.Main();
 // SerializationDemo.Main();
-DynamicKeyworld.Main();
+// DynamicKeyworld.Main();
+SemaphoreLimitCallDemo.Main(new[] { "2" });
 
 class StringFormatDemo
 {
@@ -645,17 +646,18 @@ class MultiThreadDemo
 
 class BlockWaitingDemo
 {
-    static int SingleThreadVersion(int end)
-    {
-        var range = new Range(1, end);
+    // static int SingleThreadVersion(int end)
+    // {
+    //     var range = new Range(1, end);
 
-    }
+    // }
 
     static void FindPrime(object state)
     {
-        var range = state as Range;
+        var range = state as Range?;
+        if(range == null) return;
 
-        for (var number = range.Start.Value; number <= range.End.Value; ++number)
+        for (var number = range.Value.Start.Value; number <= range.Value.End.Value; ++number)
         {
             if (number < 2) continue;
 
@@ -682,7 +684,7 @@ class LockBasic
     private static object _countLock = new object();
     static void IncrementMonitor()
     {
-        for (var i = 0; i < _countLock; ++i)
+        for (var i = 0; i < Convert.ToInt64(_countLock); ++i)
         {
             bool lockTaken = false;
             try
@@ -707,5 +709,65 @@ class MutexDemo
         Console.WriteLine("尝试获取锁！是否创建：{mutextWasCreated}");
         var ret = mutext.WaitOne();
 
+    }
+}
+
+
+class SemaphoreLimitCallDemo
+{
+    private static int MAX_CALL_COUNT = 9;
+    private static SemaphoreSlim s_limitedCallSemaphore = new SemaphoreSlim(MAX_CALL_COUNT);
+
+    public static void Main(string[] args)
+    {
+        var random = new Random();
+        var rounds = int.Parse(args[0]);
+        var threads = new List<Thread>();
+
+
+        for (var i = 0; i < rounds; ++i)
+        {
+            var threadCount = random.Next(5, 30);
+            for (var j = 0; j < threadCount; ++j)
+            {
+                threads.Add(new Thread(LimitedCallThread));
+                threads[threads.Count - 1].Start();
+            }
+        }
+    }
+
+    static void LimitedCallThread()
+    {
+        s_limitedCallSemaphore.Wait();
+        try
+        {
+            LimitedCall();
+        }
+        finally
+        {
+            s_limitedCallSemaphore.Release();
+        }
+    }
+
+    static int s_currentCalls = 0;
+    static object s_callback = new object();
+
+    static void LimitedCall()
+    {
+        var callcount = 0;
+        lock (s_callback)
+        {
+            s_currentCalls++;
+
+            if (s_currentCalls > MAX_CALL_COUNT)
+                throw new InvalidOperationException("调用超限！");
+
+            callcount = s_currentCalls;
+        }
+
+
+        Console.WriteLine($"执行调用，当前是第{callcount}次调用！");
+        Thread.Sleep(new Random().Next(500, 2000));
+        lock (s_callback) s_currentCalls--;
     }
 }

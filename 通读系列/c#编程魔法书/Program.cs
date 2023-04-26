@@ -696,3 +696,10 @@ class LockBasic
         }
     }
 }
+
+class MutexDemo {
+    public static void Main(){ 
+    var mutext = new Mutex(false,"Global\\MutexExample", out bool  );
+    Console.WriteLine("尝试获取锁！是否创建");
+    }
+}

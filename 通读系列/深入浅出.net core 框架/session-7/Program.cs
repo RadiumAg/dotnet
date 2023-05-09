@@ -1,4 +1,3 @@
-
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +18,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCustomExtension();
+app.MapGet("/test", http =>
+{
+    http.Response.Headers.Add("Content-Disposition", "attachment; filename=_________.xlsx; filename*=UTF-8''%E4%BE%9B%E5%BA%94%E5%95%86%E6%A1%A3%E6%A1%88%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx");
+    return Task.CompletedTask;
+});
+
+// app.UseCustomExtension();
 
 app.UseHttpsRedirection();
 
@@ -35,7 +40,7 @@ public class CustomMiddleware
     private readonly RequestDelegate? _next;
     private readonly ILogger<CustomMiddleware>? _logger;
 
-    public CustomMiddleware(RequestDelegate next, ILogger<CustomMiddleware> logger)
+    public CustomMiddleware(RequestDelegate next, ILogger<CustomMiddleware> logger,IHttpContextAccessor httpContextAccessor)
     {
         this._next = next;
         this._logger = logger;
@@ -61,13 +66,13 @@ public class CustomMiddleware
     }
 }
 
-public static class MiddlewareExtension
-{
-    public static void UseCustomExtension(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<CustomMiddleware>();
-    }
-}
+// public static class MiddlewareExtension
+// {
+//     public static void UseCustomExtension(this IApplicationBuilder app)
+//     {
+//         app.UseMiddleware<CustomMiddleware>();
+//     }
+// }
 
 
 public class CustomApiResponse
@@ -87,6 +92,6 @@ public class CustomApiResponse
 
     public int Status { get; set; }
     public string RequestId { get; set; }
-    public object Result { get; set;]}
+    public object Result { get; set;}
 }
 
